@@ -1,0 +1,21 @@
+// Define the parser rules
+schema = _{ table* } // Regras de análise sintática para o esquema
+ASCII_ALPHA = { ["a".."z" | "A".."Z"] } // Caracteres alfabéticos ASCII
+ASCII_DIGIT = { ["0".."9"] } // Caracteres numéricos ASCII
+_ = _{ " " | "\t" | "\n" } // Caracteres de espaço em branco
+
+// Define a grammar for the schema structure
+table_name = { ASCII_ALPHA+ } // Nome da tabela
+column_name = { ASCII_ALPHA+ } // Nome da coluna
+int = { ["-"]? ASCII_DIGIT+ } // Tipo inteiro
+float = { ["-"]? ASCII_DIGIT+ "." ASCII_DIGIT* } // Tipo float
+string = { "\"" (!"\"" any)* "\"" } // Tipo string
+custom_type = { ASCII_ALPHA+ } // Tipo personalizado
+column_type = { "TinyInt" | "SmallInt" | "MediumInt" | "Int" | "BigInt" | "Float" | "Double" | "Decimal" | "Char" | "VarChar" | "Binary" | "VarBinary" | "TinyBlob" | "Blob" | "MediumBlob" | "LongBlob" | "TinyText" | "Text" | "MediumText" | "LongText" | "Date" | "DateTime" | "Time" | "Timestamp" | "Year" | custom_type | int | float | string }
+column = { column_name ":" column_type ["not_null"] ["auto_increment"] ["unique"] ["primary_key"] } // Definição da coluna
+primary_key = { "primary_key" "(" column_name+ ")" } // Definição de chave primária
+foreign_key = { "foreign_key" "(" column_name ("," column_name)* ")" "references" table_name "(" column_name ("," column_name)* ")" ["on_delete" ("cascade" | "no_action")] ["on_update" ("cascade" | "no_action")] } // Definição de chave estrangeira
+unique = { "unique" "(" column_name+ ")" } // Definição de restrição de chave única
+table_constraint = { primary_key | foreign_key | unique } // Definição de restrição de tabela
+table = { "table" _ table_name _ "{" column* table_constraint* "}" } // Definição da tabela
+

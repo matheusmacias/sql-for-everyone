@@ -1,9 +1,4 @@
-use pest::Parser;
-
-#[derive(Parser)]
-pub struct MySqlParser;
-
-pub mod ast {
+pub mod RuleTable {
     #[derive(Debug)]
     pub enum ColumnType {
         TinyInt(i32),
